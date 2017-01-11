@@ -33,7 +33,7 @@ public class DrinkActivity extends AppCompatActivity {
             Cursor cursor = db.query(StarCoffeeSQLHelper.TABLE_NAME,
                     new String[] {"NAME", "DESCRIPTION", "IMAGE"},
                     "_id = ?",
-                    new String[] {Integer.toString(drinkNum+1)},
+                    new String[] {Integer.toString(drinkNum)},
                     null, null, null);
 
             //get some
