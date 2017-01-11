@@ -1,11 +1,14 @@
 package com.yd.starcoffeesqlconnect;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +20,10 @@ public class DrinkActivity extends AppCompatActivity {
     private String mName;
     private String mDescr;
     private int mImageID;
+    private boolean mFav;
+
+    private SQLiteDatabase mDB;
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,24 +35,25 @@ public class DrinkActivity extends AppCompatActivity {
 
         try{
             SQLiteOpenHelper sqLiteOpenHelper = new StarCoffeeSQLHelper(this);
-            SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
+            SQLiteDatabase mDB = sqLiteOpenHelper.getReadableDatabase();
 
-            Cursor cursor = db.query(StarCoffeeSQLHelper.TABLE_NAME,
-                    new String[] {"NAME", "DESCRIPTION", "IMAGE"},
+            mCursor = mDB.query(StarCoffeeSQLHelper.TABLE_NAME,
+                    new String[] {"NAME", "DESCRIPTION", "IMAGE", "FAVOURITE"},
                     "_id = ?",
                     new String[] {Integer.toString(drinkNum)},
                     null, null, null);
 
             //get some
-            if(cursor.moveToFirst()){
-                mName = cursor.getString(0);
-                mDescr = cursor.getString(1);
-                mImageID = cursor.getInt(2);
+            if(mCursor.moveToFirst()){
+                mName = mCursor.getString(0);
+                mDescr = mCursor.getString(1);
+                mImageID = mCursor.getInt(2);
+                mFav = (mCursor.getInt(3) == 1);
             }
 
             //closing all
-            cursor.close();
-            db.close();
+            mCursor.close();
+            mDB.close();
 
         }catch(SQLException ex){
             Toast.makeText(this, "FAIL to Connect: " + ex.getMessage(), Toast.LENGTH_LONG).show();
@@ -62,6 +70,10 @@ public class DrinkActivity extends AppCompatActivity {
         TextView descr = (TextView) findViewById(R.id.description);
         descr.setText(mDescr);
 
+        //favourite drink
+        CheckBox checkBox = (CheckBox) findViewById(R.id.favourite);
+        checkBox.setChecked(mFav);
+
         /*
         //get more info
         Drink drink = Drink.drinks[drinkNum];
@@ -77,5 +89,37 @@ public class DrinkActivity extends AppCompatActivity {
         TextView descr = (TextView) findViewById(R.id.description);
         descr.setText(drink.getDescrip());
         //*/
+    }
+
+    public void onFavourite(View view){
+        int drinkNum = getIntent().getIntExtra(EXTRA_DRINKNUM, 0);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.favourite);
+
+        ContentValues drinks = new ContentValues();
+        drinks.put("FAVOURITE", checkBox.isChecked());
+
+        try{
+            SQLiteOpenHelper sqLiteOpenHelper = new StarCoffeeSQLHelper(this);
+            SQLiteDatabase mDB = sqLiteOpenHelper.getWritableDatabase();
+
+            mDB.update(StarCoffeeSQLHelper.TABLE_NAME,
+                    drinks,
+                    "_id = ?",
+                    new String[] {Integer.toString(drinkNum)});
+
+            //closing all
+            mDB.close();
+
+        }catch(SQLException ex){
+            Toast.makeText(this, "FAIL to Connect: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +11,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.yd.starcoffeesqlconnect.TopLevelActivity"
-    tools:showIn="@layout/activity_top_level">
+    tools:showIn="@layout/activity_top_level"
+    android:orientation="vertical"
+    >
 
     <ImageView
         android:id="@+id/logo"
@@ -26,8 +28,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/listEntry"
-        android:layout_below="@+id/logo"
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_fav"
+        android:text="@string/top_favorites"
+        android:textSize="50sp"
+        />
 
-</RelativeLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_listview_fav"
+
+        />
+
+</LinearLayout>

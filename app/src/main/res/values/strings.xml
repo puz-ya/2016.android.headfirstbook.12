@@ -10,4 +10,6 @@
         <item>Stores</item>
     </string-array>
 
+    <string name="favourite">Favourite</string>
+    <string name="top_favorites">Your favorite drinks:</string>
 </resources>

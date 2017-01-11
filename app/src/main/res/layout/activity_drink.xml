@@ -30,4 +30,11 @@
         android:layout_height="wrap_content"
         />
 
+    <CheckBox
+        android:id="@+id/favourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/favourite"
+        android:onClick="onFavourite"
+        />
 </LinearLayout>

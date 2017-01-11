@@ -1,16 +1,25 @@
 package com.yd.starcoffeesqlconnect;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class TopLevelActivity extends AppCompatActivity {
+
+    private SQLiteDatabase mDB;
+    private Cursor mCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +28,38 @@ public class TopLevelActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.toplist);
         listView.setOnItemClickListener(mOnItemClickListener);
+
+        ListView listViewFav = (ListView) findViewById(R.id.top_listview_fav);
+        try{
+            SQLiteOpenHelper sqLiteOpenHelper = new StarCoffeeSQLHelper(this);
+            mDB = sqLiteOpenHelper.getReadableDatabase();
+
+            mCursor = mDB.query(StarCoffeeSQLHelper.TABLE_NAME,
+                    new String[]{"_id, NAME"},
+                    "FAVOURITE = 1",
+                    null, null, null, null);
+
+            CursorAdapter cursorAdapter = new SimpleCursorAdapter(this,
+                    android.R.layout.simple_list_item_1,
+                    mCursor,
+                    new String[]{"NAME"},
+                    new int[] {android.R.id.text1},
+                    0);
+            listViewFav.setAdapter(cursorAdapter);
+
+        }catch(SQLException ex){
+            Toast.makeText(this, "FAIL to Connect: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        listViewFav.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> listView, View v, int position, long id){
+
+                Intent intent = new Intent(TopLevelActivity.this, DrinkActivity.class);
+                intent.putExtra(DrinkActivity.EXTRA_DRINKNUM, (int)id);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -56,4 +97,35 @@ public class TopLevelActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        mCursor.close();
+        mDB.close();
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+
+        try{
+            StarCoffeeSQLHelper starCoffeeSQLHelper = new StarCoffeeSQLHelper(this);
+            mDB = starCoffeeSQLHelper.getReadableDatabase();
+
+            //same as previous
+            Cursor cursor = mDB.query(StarCoffeeSQLHelper.TABLE_NAME,
+                    new String[] { "_id", "NAME"},
+                    "FAVOURITE = 1",
+                    null, null, null, null);
+
+            ListView listFav = (ListView) findViewById(R.id.top_listview_fav);
+            CursorAdapter cursorAdapter = (CursorAdapter) listFav.getAdapter();
+            cursorAdapter.changeCursor(cursor);
+            mCursor = cursor;
+
+        }catch(SQLException ex){
+            Toast.makeText(this, "FAIL to Connect: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 }
