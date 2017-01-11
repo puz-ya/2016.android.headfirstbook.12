@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Starcoffee</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="logo">StarCoffee Logo</string>
+
+    <string-array name="listEntry">
+        <item>Drinks</item>
+        <item>Food</item>
+        <item>Stores</item>
+    </string-array>
+
+</resources>
