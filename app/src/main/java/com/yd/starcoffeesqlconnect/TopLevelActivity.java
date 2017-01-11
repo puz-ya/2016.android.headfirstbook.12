@@ -16,8 +16,6 @@ public class TopLevelActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_level);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ListView listView = (ListView) findViewById(R.id.toplist);
         listView.setOnItemClickListener(mOnItemClickListener);
