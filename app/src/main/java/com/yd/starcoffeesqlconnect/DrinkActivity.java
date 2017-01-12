@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -93,6 +95,10 @@ public class DrinkActivity extends AppCompatActivity {
 
     public void onFavourite(View view){
         int drinkNum = getIntent().getIntExtra(EXTRA_DRINKNUM, 0);
+
+        new UpdateDrinkTask().execute(drinkNum);
+
+        /* old version
         CheckBox checkBox = (CheckBox) findViewById(R.id.favourite);
 
         ContentValues drinks = new ContentValues();
@@ -110,9 +116,9 @@ public class DrinkActivity extends AppCompatActivity {
             //closing all
             mDB.close();
 
-        }catch(SQLException ex){
+        }catch(SQLiteException ex){
             Toast.makeText(this, "FAIL to Connect: " + ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        } */
 
     }
 
@@ -120,6 +126,42 @@ public class DrinkActivity extends AppCompatActivity {
     public void onDestroy(){
         super.onDestroy();
 
+    }
 
+    private class UpdateDrinkTask extends AsyncTask<Integer, Void, Boolean> {
+        ContentValues drinkValues;
+
+        protected void onPreExecute(){
+            CheckBox checkBox = (CheckBox) findViewById(R.id.favourite);
+            drinkValues = new ContentValues();
+            drinkValues.put("FAVOURITE", checkBox.isChecked());
+        }
+
+        protected Boolean doInBackground(Integer... drinks){
+            int drinkNo = drinks[0];
+            SQLiteOpenHelper starCoffeeSQLHelper = new StarCoffeeSQLHelper(DrinkActivity.this);
+            try {
+                SQLiteDatabase db = starCoffeeSQLHelper.getWritableDatabase();
+                db.update("DRINK", drinkValues,
+                        "_id = ?", new String[] {Integer.toString(drinkNo)});
+                db.close();
+                return true;
+            } catch(SQLiteException e) {
+                return false;
+            }
+
+        }
+
+        /*
+        protected void onProgressUpdate(Integer... progress){
+            setProgress(progress[0]);
+        }
+        //*/
+
+        protected void onPostExecute(Boolean success){
+            if(!success){
+                Toast.makeText(DrinkActivity.this, "DB failed", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
