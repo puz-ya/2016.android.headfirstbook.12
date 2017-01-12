@@ -142,7 +142,7 @@ public class DrinkActivity extends AppCompatActivity {
             SQLiteOpenHelper starCoffeeSQLHelper = new StarCoffeeSQLHelper(DrinkActivity.this);
             try {
                 SQLiteDatabase db = starCoffeeSQLHelper.getWritableDatabase();
-                db.update("DRINK", drinkValues,
+                db.update(StarCoffeeSQLHelper.TABLE_NAME, drinkValues,
                         "_id = ?", new String[] {Integer.toString(drinkNo)});
                 db.close();
                 return true;
