@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class StarCoffeeSQLHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "starcoffee_db";   //db name
-    public static final int DB_VERSION = 5; //db version
+    public static final int DB_VERSION = 2; //db version
     public static final String TABLE_NAME = "DRINKS";
 
     StarCoffeeSQLHelper(Context context){
@@ -39,8 +39,8 @@ public class StarCoffeeSQLHelper extends SQLiteOpenHelper {
     }
 
     public void updateMyDB(SQLiteDatabase db, int oldVer, int newVer){
-        if(newVer != oldVer){
-            db.execSQL("DROP TABLE "+TABLE_NAME+";");
+        if(oldVer < 1){
+            //db.execSQL("DROP TABLE "+TABLE_NAME+";");
 
             db.execSQL("CREATE TABLE "+TABLE_NAME+" (" +
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -54,9 +54,10 @@ public class StarCoffeeSQLHelper extends SQLiteOpenHelper {
             insertDrink(db, "Filter", "Our best drip coffee", R.drawable.filter, 0);
         }
 
-        /*
         if(oldVer < 2){
             //code
-        } */
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN FAVORITE NUMERIC;");
+        }
+        //*/
     }
 }

@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/text_fav"
         android:text="@string/top_favorites"
-        android:textSize="50sp"
+        android:textSize="20sp"
         />
 
     <ListView

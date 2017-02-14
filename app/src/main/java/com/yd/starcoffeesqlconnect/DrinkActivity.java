@@ -37,7 +37,7 @@ public class DrinkActivity extends AppCompatActivity {
 
         try{
             SQLiteOpenHelper sqLiteOpenHelper = new StarCoffeeSQLHelper(this);
-            SQLiteDatabase mDB = sqLiteOpenHelper.getReadableDatabase();
+            SQLiteDatabase mDB = sqLiteOpenHelper.getWritableDatabase();
 
             mCursor = mDB.query(StarCoffeeSQLHelper.TABLE_NAME,
                     new String[] {"NAME", "DESCRIPTION", "IMAGE", "FAVOURITE"},
